@@ -1,62 +1,64 @@
-import React from 'react';
-import { createStore, combineReducers } from 'redux';
+import React from "react";
 
-import { connect, Provider } from 'react-redux';
-import {v4} from 'uuid';
-import './App.css';
+import { connect } from "react-redux";
+import {bindActionCreators} from 'redux';
 
-function loginXReducer(currentState = { username: 'diep', arr1: {arr: [1,2,3]} }, action) {
-  console.log(currentState, action);
-  if (action.type === "V") {
-    currentState.arr1.arr.push(4);
-  }
-  return {...currentState}; //shallow cline
-}
+import * as A from './actions'
 
-const store = createStore(combineReducers({
-  loginX : loginXReducer
-}));
+import { v4 } from "uuid";
+import "./App.css";
 
 function App() {
   return (
     <div className="App">
       Hello out scope
-      <Provider store={store}>
-          <LoginWithHOC />
-      </Provider>
+      <LoginWithHOC />
     </div>
   );
 }
 
+
 class LoginComponent extends React.Component {
+  componentDidMount() {
+    //this.props.callLogicMaKPhaiCuaUIAsync();
+
+  }
   render() {
     console.log(this.props);
 
     return (
       <div>
         <p>USERNAME = {this.props.loginX.username}</p>
-        {this.props.loginX.arr1.arr.map(x => <p key={`${v4()}`}>{x}</p>)}
+        {this.props.loginX.arr1.arr.map((x) => (
+          <p key={`${v4()}`}>{x}</p>
+        ))}
         <button onClick={() => this.props.actionX("V", "B")}>CLICK ME</button>
+        <button onClick={() => this.props.actionT.incrementAsync()}>CLICK 2</button>
       </div>
     );
   }
 }
 
 function LoginComponent2(props) {
-    return (
-      <div>
-        <p>USERNAME = {props.loginX.username}</p>
-        {props.loginX.arr1.arr.map(x => <p key={`${v4()}`}>{x}</p>)}
-        <button onClick={() => props.actionX("V", "B")}>CLICK ME</button>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <p>USERNAME = {props.loginX.username}</p>
+      {props.loginX.arr1.arr.map((x) => (
+        <p key={`${v4()}`}>{x}</p>
+      ))}
+      <button onClick={() => props.actionX("V", "B")}>CLICK ME</button>
+    </div>
+  );
+}
 
-const HOC = connect((currentStore) => ({loginX: currentStore.loginX}), 
-(dispatch) => ({
-  actionX : (typeN, valueN) => dispatch({type: typeN, valueN})
-}));
+const HOC = connect(
+  (currentStore) => ({ loginX: currentStore.loginX }),
+  (dispatch) => ({
+    actionT: bindActionCreators(A, dispatch),
+    actionX: (typeN, valueN) => dispatch({ type: typeN, valueN }),
+  })
+);
 
-const LoginWithHOC = HOC(LoginComponent2);
+const LoginWithHOC = HOC(LoginComponent);
 
 export default App;
