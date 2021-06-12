@@ -34,21 +34,11 @@ class LoginComponent extends React.Component {
         ))}
         <button onClick={() => this.props.actionX("V", "B")}>CLICK ME</button>
         <button onClick={() => this.props.actionT.incrementAsync()}>CLICK 2</button>
+        <br/>
+        <button onClick={() => this.props.actionX("USER_FETCH_REQUESTED", "B")}>CLICK ME SAGA</button>
       </div>
     );
   }
-}
-
-function LoginComponent2(props) {
-  return (
-    <div>
-      <p>USERNAME = {props.loginX.username}</p>
-      {props.loginX.arr1.arr.map((x) => (
-        <p key={`${v4()}`}>{x}</p>
-      ))}
-      <button onClick={() => props.actionX("V", "B")}>CLICK ME</button>
-    </div>
-  );
 }
 
 const HOC = connect(
