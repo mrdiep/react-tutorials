@@ -1,54 +1,43 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 
-import { connect } from "react-redux";
-import {bindActionCreators} from 'redux';
-
-import * as A from './actions'
-
-import { v4 } from "uuid";
 import "./App.css";
 
 function App() {
+  const [hoverProps, isHover] = useHover();
+  const active = useActive(1);
+
+  console.log('App render...');
+  const T = ({show}) => {
+    console.log('render T');
+    return <div><br/>HOVER STATUS =  {show ? "YES" : 'NO'}</div>;
+  }
+  const M = useMemo(() => T, [isHover]);
+
   return (
-    <div className="App">
-      Hello out scope
-      <LoginWithHOC />
+    <div style={{backgroundColor: '#ddeeff'}} {...hoverProps}>
+      <M show={isHover}/>
+      <div>{`toggle active each 2s= ${active}`}</div>
     </div>
   );
 }
 
+function useActive(param1) {
+  console.log("useActive");
+  const [active, setActive] = useState(null);
 
-class LoginComponent extends React.Component {
-  componentDidMount() {
-    //this.props.callLogicMaKPhaiCuaUIAsync();
+  setTimeout(() => setActive(!active), 2000);
 
-  }
-  render() {
-    console.log(this.props);
-
-    return (
-      <div>
-        <p>USERNAME = {this.props.loginX.username}</p>
-        {this.props.loginX.arr1.arr.map((x) => (
-          <p key={`${v4()}`}>{x}</p>
-        ))}
-        <button onClick={() => this.props.actionX("V", "B")}>CLICK ME</button>
-        <button onClick={() => this.props.actionT.incrementAsync()}>CLICK 2</button>
-        <br/>
-        <button onClick={() => this.props.actionX("USER_FETCH_REQUESTED", "B")}>CLICK ME SAGA</button>
-      </div>
-    );
-  }
+  return active;
 }
 
-const HOC = connect(
-  (currentStore) => ({ loginX: currentStore.loginX }),
-  (dispatch) => ({
-    actionT: bindActionCreators(A, dispatch),
-    actionX: (typeN, valueN) => dispatch({ type: typeN, valueN }),
-  })
-);
+function useHover() {
+  console.log("useHover");
+  const [isHover, setIsHover] = useState(false);
 
-const LoginWithHOC = HOC(LoginComponent);
+  const onMouseLeave = () => setIsHover(false);
+  const onMouseEnter = () => setIsHover(true);
+
+  return [{ onMouseLeave, onMouseEnter }, isHover];
+}
 
 export default App;
