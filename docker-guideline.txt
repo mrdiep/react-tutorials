@@ -1,0 +1,5 @@
+docker build -t ten_image .
+
+docker images
+
+docker run -p 3000:3000 -d ten_image
